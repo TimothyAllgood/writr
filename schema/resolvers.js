@@ -1,6 +1,3 @@
-// Fake Database to test GraphQL
-const { users } = require('../fakeData');
-
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../models');
@@ -51,6 +48,41 @@ const register = async (parent, args) => {
   }
 };
 
+// Login an existing user
+const login = async (parent, args) => {
+  try {
+    // FIND USER BY EMAIL (OR USERNAME)
+    const foundUser = await db.User.findOne({ username: args.username });
+
+    if (!foundUser) {
+      throw new Error('No user found with that username');
+    }
+
+    // CHECK IF PASSWORDS MATCH
+    const isMatch = await bcrypt.compare(args.password, foundUser.password);
+    if (!isMatch) {
+      throw new Error('Password is incorrect');
+    }
+
+    // CREATE TOKEN PAYLOAD
+    const payload = { id: foundUser._id, user: foundUser.username };
+    const secret = process.env.SECRET;
+    const expiration = { expiresIn: '1h' };
+
+    // SIGN TOKEN
+    const token = await jwt.sign(payload, secret, expiration);
+
+    // SEND SUCCESS WITH TOKEN
+    return { id: foundUser._id, token };
+  } catch (error) {
+    if (error) {
+      throw new Error(error);
+    } else {
+      throw new Error('Something went wrong. Please try again');
+    }
+  }
+};
+
 // Returns a list of all users
 const getAllUsers = () => {
   return users;
@@ -63,6 +95,7 @@ const resolvers = {
   },
   Mutation: {
     register,
+    login,
   },
 };
 

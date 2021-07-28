@@ -73,7 +73,7 @@ const login = async (parent, args) => {
     const token = await jwt.sign(payload, secret, expiration);
 
     // SEND SUCCESS WITH TOKEN
-    return { id: foundUser._id, token };
+    return { id: foundUser._id, username: foundUser.username, token };
   } catch (error) {
     if (error) {
       throw new Error(error);
@@ -83,16 +83,47 @@ const login = async (parent, args) => {
   }
 };
 
+const verify = () => {
+  const token = req.headers['authorization'];
+  jwt.verify(token, process.env.JWT_SECRET, (err, decodedUser) => {
+    if (err || !decodedUser) {
+      return res.status(401).json({
+        message: 'You are not authorized. Please login and try again',
+      });
+    }
+
+    // ADD PAYLOAD TO REQ OBJECT
+    req.currentUser = decodedUser;
+
+    // ********** --- --- **********
+    // SEND SUCCESS WITH TOKEN AS VERIFY ROUTE
+    return decodedUser;
+
+    // ********** --- --- **********
+    // CALL NEXT AS MIDDLEWARE FUNCTION
+    // next();
+  });
+};
+
 // Returns a list of all users
 const getAllUsers = async () => {
   const users = await db.User.find();
   return users;
 };
 
+// Find User By Id
+const getUser = async (parent, args) => {
+  const id = args.id;
+  const foundUser = await db.User.findById(id);
+  return foundUser;
+};
+
 // Resolvers for GraphQL
 const resolvers = {
   Query: {
     getAllUsers,
+    getUser,
+    verify,
   },
   Mutation: {
     signup,

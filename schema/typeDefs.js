@@ -9,7 +9,8 @@ const typeDefs = gql`
   }
 
   type LoggedInUser {
-    id: String!
+    id: String
+    username: String
     token: String!
   }
 
@@ -18,6 +19,8 @@ const typeDefs = gql`
   type Query {
     # User Queries
     getAllUsers: [User!]!
+    getUser(id: String!): User!
+    verify: User
   }
 
   # Mutations

@@ -4,8 +4,8 @@ const db = require('../models');
 
 // User Resolvers
 
-// Register a new user
-const register = async (parent, args) => {
+// Sign UP a new user
+const signup = async (parent, args) => {
   // Validate Field Input
   if (!args.username || !args.email || !args.password) {
     throw new Error('All Fields Are Required');
@@ -84,7 +84,8 @@ const login = async (parent, args) => {
 };
 
 // Returns a list of all users
-const getAllUsers = () => {
+const getAllUsers = async () => {
+  const users = await db.User.find();
   return users;
 };
 
@@ -94,7 +95,7 @@ const resolvers = {
     getAllUsers,
   },
   Mutation: {
-    register,
+    signup,
     login,
   },
 };

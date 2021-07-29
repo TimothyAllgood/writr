@@ -156,6 +156,30 @@ const createStory = async (parent, args) => {
 	return newStory;
 };
 
+const updateStory = async (parents, args) => {
+	const updatedStory = await db.Story.findOneAndUpdate(
+		{ _id: args.id },
+		{ title: args.title, story: args.story },
+		{
+			new: true,
+		}
+	);
+
+	return updatedStory;
+};
+
+const deleteStory = async (parents, args) => {
+	await db.Story.findOneAndDelete({ _id: args.id });
+	await db.User.findOneAndUpdate(
+		{ _id: args.authorId },
+		{
+			$pull: { stories: args.id },
+		}
+	);
+
+	return 'Item Deleted';
+};
+
 // Resolvers for GraphQL
 const resolvers = {
 	Query: {
@@ -169,6 +193,8 @@ const resolvers = {
 		signup,
 		login,
 		createStory,
+		deleteStory,
+		updateStory,
 	},
 };
 

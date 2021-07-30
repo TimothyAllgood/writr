@@ -137,9 +137,15 @@ const getAllStories = async (parent, args) => {
 };
 
 const getUserStories = async (parent, args) => {
-	const id = args.id;
-	const foundStories = await db.Story.find('author', id);
+	const foundStories = await db.Story.find({ 'author.id': args.id });
+
 	return foundStories;
+};
+
+const getStoryById = async (parent, args) => {
+	const foundStory = await db.Story.findOne({ _id: args.id });
+
+	return foundStory;
 };
 
 const createStory = async (parent, args) => {
@@ -186,6 +192,7 @@ const resolvers = {
 		getAllUsers,
 		getAllStories,
 		getUserStories,
+		getStoryById,
 		getUser,
 		verify,
 	},

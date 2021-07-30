@@ -33,6 +33,7 @@ const typeDefs = gql`
 		getAllUsers: [User!]!
 		getAllStories: [Story!]!
 		getUserStories(id: String!): [Story!]!
+		getStoryById(id: String!): Story!
 		getUser(id: String!): User!
 		verify: User
 	}

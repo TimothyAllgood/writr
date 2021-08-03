@@ -129,6 +129,12 @@ const getUser = async (parent, args) => {
 	return foundUser;
 };
 
+const getUserByUsername = async (parent, args) => {
+	const id = args.id;
+	const foundUser = await db.User.findOne({ username: args.username });
+	return foundUser;
+};
+
 // Story Resolvers
 
 const getAllStories = async (parent, args) => {
@@ -194,6 +200,7 @@ const resolvers = {
 		getUserStories,
 		getStoryById,
 		getUser,
+		getUserByUsername,
 		verify,
 	},
 	Mutation: {

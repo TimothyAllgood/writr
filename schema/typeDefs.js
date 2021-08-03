@@ -6,6 +6,7 @@ const typeDefs = gql`
 		username: String!
 		email: String!
 		password: String!
+		id: String!
 	}
 
 	type LoggedInUser {
@@ -35,6 +36,7 @@ const typeDefs = gql`
 		getUserStories(id: String!): [Story!]!
 		getStoryById(id: String!): Story!
 		getUser(id: String!): User!
+		getUserByUsername(username: String!): User!
 		verify: User
 	}
 
